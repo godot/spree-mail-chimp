@@ -79,8 +79,15 @@ Spree::User.class_eval do
   #
   # Returns a Mailchimp list ID String
   def mailchimp_list_id
-    @mailchimp_list_id ||= Spree::Config.get(:mailchimp_list_id)
+    @mailchimp_list_id ||= mailchimp_list_id_from_env || Spree::Config.get(:mailchimp_list_id)
   end
+
+  def mailchimp_list_id_from_env
+    ENV["MAILCHIMP_LIST_ID_#{I18n.locale.to_s.upcase}"]
+  rescue
+    nil
+  end
+
 
   # Generates the subsubcription options for the application
   #

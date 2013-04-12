@@ -13,15 +13,16 @@ class Spree::SubscriptionsController < Spree::BaseController
       @errors << t('invalid_email_address')
     else
       begin
-        @mc_member = hominid.list_member_info(Spree::Config.get(:mailchimp_list_id), [params[:email]])
-        rescue Hominid::APIError => e
+        @mc_member = hominid.list_member_info(mailchimp_list_id, [params[:email]])
+      rescue Hominid::APIError => e
+          Rails.logger.error e.to_s
       end
 
       if @mc_member['errors'] == 0
         @errors << t('that_address_is_already_subscribed')
       else
         begin
-          hominid.list_subscribe(Spree::Config.get(:mailchimp_list_id), params[:email], {})
+          hominid.list_subscribe(mailchimp_list_id, params[:email], {})
         rescue
           @errors << t('invalid_email_address')
         end
@@ -32,4 +33,16 @@ class Spree::SubscriptionsController < Spree::BaseController
       wants.js
     end
   end
+
+  private
+  def mailchimp_list_id
+    @mailchimp_list_id ||= mailchimp_list_id_from_env || Spree::Config.get(:mailchimp_list_id)
+  end
+
+  def mailchimp_list_id_from_env
+    ENV["MAILCHIMP_LIST_ID_#{I18n.locale.to_s.upcase}"]
+  rescue
+    nil
+  end
+
 end
