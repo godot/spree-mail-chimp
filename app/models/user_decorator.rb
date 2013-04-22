@@ -123,7 +123,7 @@ Spree::User.class_eval do
         merge_vars[method.upcase] = self.send(method.downcase) if @user.respond_to? method.downcase
       end
     end
-    merge_vars[:GROUPINGS] = [{ "name"=>"LANGS", groups: group_name_from_locale }]
+    merge_vars[:GROUPINGS] = [{ "name"=>"Language", groups: group_name_from_locale }]
     merge_vars
   end
 
