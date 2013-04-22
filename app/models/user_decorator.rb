@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 Spree::User.class_eval do
 
   before_create :mailchimp_add_to_mailing_list
@@ -122,7 +123,15 @@ Spree::User.class_eval do
         merge_vars[method.upcase] = self.send(method.downcase) if @user.respond_to? method.downcase
       end
     end
+    merge_vars[:GROUPINGS] = [{ "name"=>"LANGS", groups: group_name_from_locale }]
     merge_vars
   end
 
+  def group_name_from_locale
+    if I18n.locale == :fr
+      'Newsletter en français'
+    else
+      'Newsletter in english'
+    end
+  end
 end
