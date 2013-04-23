@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Spree::SubscriptionsController < Spree::BaseController
 
   def hominid
@@ -22,7 +23,7 @@ class Spree::SubscriptionsController < Spree::BaseController
         @errors << t('that_address_is_already_subscribed')
       else
         begin
-          hominid.list_subscribe(mailchimp_list_id, params[:email], {})
+          hominid.list_subscribe(mailchimp_list_id, params[:email], mailchimp_merge_vars)
         rescue
           @errors << t('invalid_email_address')
         end
@@ -44,5 +45,20 @@ class Spree::SubscriptionsController < Spree::BaseController
   rescue
     nil
   end
+
+  def mailchimp_merge_vars
+    merge_vars = {}
+    merge_vars[:GROUPINGS] = [{ "name"=>"Language", groups: group_name_from_locale }]
+    merge_vars
+  end
+
+  def group_name_from_locale
+    if I18n.locale == :fr
+      'Newsletter en français'
+    else
+      'Newsletter in english'
+    end
+  end
+
 
 end
